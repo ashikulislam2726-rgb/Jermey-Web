@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#090b12"><title>Jermey@Web</title>
+<style>
+:root{color-scheme:dark;--bg:#090b12;--panel:#121522;--muted:#9299ad;--line:#252a3b;--accent:#9385ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#1c1a3c 0,transparent 48%),var(--bg);color:#f6f6fb;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.wrap{max-width:720px;margin:auto;padding:22px 18px 40px}.top{display:flex;align-items:center;justify-content:space-between;margin:8px 0 70px}.brand{font-size:19px;font-weight:750;letter-spacing:-.7px}.brand span{color:var(--accent)}.avatar{width:36px;height:36px;border-radius:50%;background:#24213e;border:1px solid #48416f;display:grid;place-items:center;color:#c9c2ff;font-weight:700}
+.hero{text-align:center;margin-bottom:30px}.logo{font-size:42px;font-weight:850;letter-spacing:-2.5px}.logo span{color:var(--accent)}.tag{color:var(--muted);font-size:14px;margin-top:9px}
+.search{margin:0 auto;display:flex;align-items:center;gap:10px;padding:7px 8px 7px 16px;border:1px solid #34334e;background:#151725;border-radius:18px;box-shadow:0 12px 40px #0005}.search input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;font-size:16px;padding:10px 0}.search button{border:0;background:var(--accent);color:#100e20;font-weight:750;border-radius:13px;padding:12px 17px;font-size:14px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:20px 0 34px}.tab{border:1px solid var(--line);background:#111420;border-radius:14px;padding:13px 5px;text-align:center;color:#c6c9d6;font-size:12px}.tab b{display:block;font-size:19px;margin-bottom:5px}.tab.active{border-color:#6259a8;background:#201d3b;color:#d9d4ff}
+.section{display:flex;align-items:center;justify-content:space-between;margin:0 2px 14px}.section strong{font-size:15px}.clear{background:none;border:0;color:var(--muted);font-size:12px}
+.shortcuts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.shortcut{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;color:#e6e7f0;text-align:left;font-size:13px}.shortcut small{display:block;color:var(--muted);margin-top:5px;font-size:11px}
+.history{margin-top:30px}.historyrow{display:flex;align-items:center;gap:12px;padding:13px 3px;border-bottom:1px solid #202333;color:#c6c9d6;font-size:13px}.historyrow span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.historyrow button{background:none;border:0;color:var(--muted);font-size:17px}
+.foot{text-align:center;color:#626a80;font-size:11px;margin-top:38px}
+@media(min-width:600px){.wrap{padding-top:30px}.top{margin-bottom:90px}.logo{font-size:52px}}
+</style></head>
+<body><main class="wrap">
+<header class="top"><div class="brand">Jermey<span>@</span>Web</div><div class="avatar">J</div></header>
+<section class="hero"><div class="logo">Search <span>everything.</span></div><div class="tag">A calmer way to explore the internet.</div></section>
+<form class="search" id="form"><span aria-hidden="true">⌕</span><input id="q" type="search" placeholder="Search the web..." autocomplete="off"><button type="submit">Search ↗</button></form>
+<nav class="tabs">
+<div class="tab active" data-type="web"><b>⌕</b>Web</div><div class="tab" data-type="isch"><b>▧</b>Images</div><div class="tab" data-type="vid"><b>▷</b>Videos</div><div class="tab" data-type="nws"><b>▤</b>News</div>
+</nav>
+<section><div class="section"><strong>Explore</strong></div><div class="shortcuts">
+<button class="shortcut" data-query="latest technology news">✦ Technology<small>Discover what's new</small></button>
+<button class="shortcut" data-query="learn programming for beginners">⌘ Programming<small>Build something great</small></button>
+<button class="shortcut" data-query="beautiful places in the world">◎ Travel & places<small>Find your next adventure</small></button>
+<button class="shortcut" data-query="science discoveries">◈ Science<small>Explore the unknown</small></button>
+</div></section>
+<section class="history"><div class="section"><strong>Recent searches</strong><button class="clear" id="clear">Clear history</button></div><div id="history"></div></section>
+<div class="foot">Search powered by Google · No account or API key required</div>
+</main>
+<script>
+let type='web';const q=document.getElementById('q');
+function search(term){term=(term||q.value).trim();if(!term){q.focus();return}let h=JSON.parse(localStorage.getItem('jw-history')||'[]');h=[term,...h.filter(x=>x!==term)].slice(0,8);localStorage.setItem('jw-history',JSON.stringify(h));render();let url='https://www.google.com/search?q='+encodeURIComponent(term);if(type!=='web')url+='&tbm='+type;window.location.href=url}
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();search()});
+document.querySelectorAll('.tab').forEach(el=>el.addEventListener('click',()=>{type=el.dataset.type;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===el));q.placeholder='Search '+(type==='isch'?'images':type==='vid'?'videos':type==='nws'?'news':'the web')+'...'}));
+document.querySelectorAll('.shortcut').forEach(el=>el.addEventListener('click',()=>search(el.dataset.query)));
+function render(){let h=JSON.parse(localStorage.getItem('jw-history')||'[]');document.getElementById('history').innerHTML=h.length?h.map((s,i)=>'<div class="historyrow"><span>◷ &nbsp;'+escapeHtml(s)+'</span><button data-i="'+i+'" aria-label="Search again">↗</button></div>').join(''):'<div style="color:#747b90;font-size:13px;padding:10px 2px">Your searches will appear here.</div>';document.querySelectorAll('[data-i]').forEach(b=>b.addEventListener('click',()=>search(h[+b.dataset.i])))}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+document.getElementById('clear').addEventListener('click',()=>{localStorage.removeItem('jw-history');render()});render();
+</script></body></html>
